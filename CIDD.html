@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cyber Intelligence System</title>
+
+<style>
+
+body{margin:0; background:black; color:#00ffcc; font-family:'Courier New',monospace; user-select:none;}
+
+.container{width:90%; max-width:500px; margin:40px auto; padding:20px; background:rgba(0,0,0,0.75); border:1px solid #00ffcc; border-radius:12px; box-shadow:0 0 20px #00ffcc;}
+
+h1{text-align:center; font-size:1.5rem; text-shadow:0 0 15px #00ffcc; margin-bottom:20px;}
+
+input{padding:10px; margin:8px 0; width:90%; background:black; border:1px solid #00ffcc; color:#00ffcc; border-radius:6px; outline:none;}
+
+button.scan-btn{padding:10px 15px; background:black; border:1px solid #00ffcc; color:#00ffcc; cursor:pointer; border-radius:6px;}
+
+button.scan-btn:hover{background:#00ffcc; color:black; box-shadow:0 0 15px #00ffcc;}
+
+.progress-bar{width:100%; height:12px; background:#002222; margin-top:20px; display:none; border-radius:10px; overflow:hidden;}
+
+.progress{height:100%; width:0%; background:#00ffcc; border-radius:10px;}
+
+.terminal{margin-top:20px; padding:15px; background:rgba(0,0,0,0.9); border-radius:10px; border:1px solid #00ffcc; min-height:180px; font-size:0.9rem; line-height:1.4; box-shadow:inset 0 0 15px #00ffcc; overflow-y:auto;}
+
+.watermark{position:fixed; bottom:15px; right:15px; font-size:12px; letter-spacing:2px; color:#00ffcc;}
+
+#logoutBtn{margin-top:15px; padding:8px 12px; border:1px solid #00ffcc; border-radius:6px; background:black; color:#00ffcc; cursor:pointer;}
+
+#logoutBtn:hover{background:#00ffcc;color:black;box-shadow:0 0 10px #00ffcc;}
+
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CYBER INTELLIGENCE DATABASE</h1>
+
+<input type="text" id="searchInput" placeholder="Enter Mobile/Name">
+
+<button class="scan-btn" id="scanBtn">Initiate Scan</button>
+
+<div class="progress-bar"><div class="progress" id="progress"></div></div>
+
+<div class="terminal" id="terminal"></div>
+
+<button id="logoutBtn">Logout</button>
+
+</div>
+
+<div class="watermark">Created by @anishahmad</div>
+
+<script>
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyAmmNfZuqIiOFI0rvwx8aUEUiSDlI8aUDA",
+
+    authDomain: "my-admin-panel-msap.firebaseapp.com",
+
+    projectId: "my-admin-panel-msap",
+
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+
+    messagingSenderId: "my-admin-panel-msap.firebasestorage.app",
+
+    appId: "1:498518648590:web:f0227f9cb10616e61fd95f"
+
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+
+// Check if user is logged in
+
+auth.onAuthStateChanged(user=>{
+
+    if(!user){ window.location.href="login.html"; }
+
+});
+
+// Logout button
+
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+
+    auth.signOut().then(()=>{ window.location.href="login.html"; });
+
+});
+
+// SCAN FUNCTION (same as before)
+
+const input=document.getElementById("searchInput");
+
+const terminal=document.getElementById("terminal");
+
+const progressBar=document.querySelector(".progress-bar");
+
+const progress=document.getElementById("progress");
+
+const scanBtn=document.getElementById("scanBtn");
+
+function randomItem(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+function generateID(){let id="";let s="";for(let i=0;i<12;i++)s+=Math.floor(Math.random()*10);return s;}
+
+scanBtn.onclick=function(){
+
+    const val=input.value.trim();
+
+    if(val===""){terminal.innerHTML="<span style='color:red;'>Enter value!</span>"; return;}
+
+    terminal.innerHTML=""; progressBar.style.display="block"; progress.style.width="0%";
+
+    let w=0;
+
+    const intv=setInterval(()=>{
+
+        if(w>=100){ clearInterval(intv); progressBar.style.display="none"; showData(val);}
+
+        else{ w++; progress.style.width=w+"%"; }
+
+    },15);
+
+};
+
+function showData(value){
+
+    const names=["Rahul Sharma","Priya Singh","Amit Verma","Sneha Patel","Arjun Kumar"];
+
+    const cities=["Delhi","Mumbai","Lucknow","Jaipur","Pune"];
+
+    const streets=["MG Road","Park Street","Nehru Nagar","Raj Colony","Green Avenue"];
+
+    const lines=[
+
+        "Connection Established...",
+
+        "Fetching Records...",
+
+        "",
+
+        "Query: "+value,
+
+        "Name: "+randomItem(names),
+
+        "Address: "+randomItem(streets)+", "+randomItem(cities)+", India",
+
+        "Date of Birth: "+(Math.floor(Math.random()*28+1))+"/"+(Math.floor(Math.random()*12+1))+"/"+(1990+Math.floor(Math.random()*15)),
+
+        "ID Number: "+generateID(),
+
+        "",
+
+        "Scan Completed Successfully."
+
+    ];
+
+    let i=0;
+
+    function printLine(){if(i<lines.length){terminal.innerHTML+=lines[i]+"<br>"; terminal.scrollTop=terminal.scrollHeight; i++; setTimeout(printLine,300);}}
+
+    printLine();
+
+}
+
+</script>
+
+</body>
+
+</html>
